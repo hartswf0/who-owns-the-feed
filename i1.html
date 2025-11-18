@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stage 2: Extraction | Platform Vernaculars</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a; --bg-surface: #1e293b; --bg-card: #334155;
+            --text-primary: #f1f5f9; --text-secondary: #cbd5e1; --text-muted: #94a3b8;
+            --accent-blue: #38bdf8; --accent-purple: #a78bfa; --accent-green: #34d399;
+            --accent-red: #f87171; --accent-yellow: #fbbf24; --accent-pink: #f472b6;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .presentation-nav {
+            background: var(--bg-surface);
+            border-bottom: 2px solid var(--accent-yellow);
+            padding: 0.75rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .nav-home { color: var(--accent-yellow); text-decoration: none; font-weight: 700; }
+        .nav-controls { display: flex; gap: 0.5rem; }
+        .nav-btn {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { background: var(--accent-yellow); color: var(--bg-dark); }
+        
+        .slide-content {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 2rem 1rem;
+        }
+        
+        .stage-title {
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: var(--accent-yellow);
+            margin-bottom: 1rem;
+            border-bottom: 8px solid var(--accent-yellow);
+            padding-bottom: 0.5rem;
+        }
+        
+        .stage-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        
+        .concept-card {
+            background: var(--bg-surface);
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-yellow);
+            margin-bottom: 2rem;
+        }
+        
+        .quote-block {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            border-left: 3px solid var(--accent-red);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .extractive-tactics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .tactic-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid var(--accent-yellow);
+        }
+        
+        .tactic-card h4 { color: var(--accent-yellow); margin-bottom: 0.5rem; }
+        
+        @media (max-width: 768px) {
+            .presentation-nav { padding: 0.5rem 1rem; }
+            .stage-title { font-size: 2rem; }
+            .nav-container { flex-direction: column; gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="presentation-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-home">🏠 Hub</a>
+            <div class="nav-controls">
+                <a href="ds-00.html" class="nav-btn">← Prev</a>
+                <a href="ds-02.html" class="nav-btn">Next →</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="slide-content">
+        <h1 class="stage-title">Stage 2: Extraction</h1>
+        <p class="stage-subtitle">Platforms shift surplus value from users to business customers</p>
+        
+        <div class="concept-card">
+            <h3>Monetization Mechanism</h3>
+            <div class="quote-block">
+                "TikTok is handing out giant teddy bears. But TikTok is not in the business of giving away giant teddy bears. TikTok is only going to funnel free attention to the people it wants to entrap until they are entrapped, then it will withdraw that attention and begin to monetize it."
+            </div>
+            <p><strong>Core Shift:</strong> Once users are locked in, platforms prioritize advertisers and business partners. Every "free" feature becomes a future revenue stream. User experience degrades as ads, promoted content, and algorithmic manipulation increase.</p>
+        </div>
+        
+        <div class="extractive-tactics">
+            <div class="tactic-card">
+                <h4>TikTok "Heating"</h4>
+                <p>Secret button lets employees push videos to millions of feeds artificially. Used to court influencers and brands, creating manufactured virality that will later be withdrawn.</p>
+            </div>
+            <div class="tactic-card">
+                <h4>Amazon's Ad Wall</h4>
+                <p>Search results become pay-to-play. Genuine relevance is replaced by sponsored listings, extracting value from sellers who must pay to be seen.</p>
+            </div>
+            <div class="tactic-card">
+                <h4>Facebook's Feed Pollution</h4>
+                <p>Chronological social feed becomes algorithmic mix of ads, suggested content, and "people you don't follow"—diluting organic community content.</p>
+            </div>
+            <div class="tactic-card">
+                <h4>Black Twitter Appropriation</h4>
+                <p>Platform algorithms identify and amplify Black cultural innovations for broader audiences, but without community context or benefit—deracinating the tradition.</p>
+            </div>
+            <div class="tactic-card">
+                <h4>YouTube's Adpocalypse</h4>
+                <p>Platform demonetizes creators arbitrarily while boosting corporate channels. Creators must chase algorithmic favor, not audience value.</p>
+            </div>
+            <div class="tactic-card">
+                <h4>ZunZuneo Data Harvesting</h4>
+                <p>Free messaging service covertly collects political data on Cuban users, transforming a communication tool into a surveillance instrument.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
