@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resistance & Adaptation | Platform Vernaculars</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a; --bg-surface: #1e293b; --bg-card: #334155;
+            --text-primary: #f1f5f9; --text-secondary: #cbd5e1; --text-muted: #94a3b8;
+            --accent-blue: #38bdf8; --accent-purple: #a78bfa; --accent-green: #34d399;
+            --accent-red: #f87171; --accent-yellow: #fbbf24; --accent-pink: #f472b6;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .presentation-nav {
+            background: var(--bg-surface);
+            border-bottom: 2px solid var(--accent-purple);
+            padding: 0.75rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .nav-home { color: var(--accent-purple); text-decoration: none; font-weight: 700; }
+        .nav-controls { display: flex; gap: 0.5rem; }
+        .nav-btn {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { background: var(--accent-purple); color: var(--bg-dark); }
+        
+        .slide-content {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 2rem 1rem;
+        }
+        
+        .stage-title {
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: var(--accent-purple);
+            margin-bottom: 1rem;
+            border-bottom: 8px solid var(--accent-purple);
+            padding-bottom: 0.5rem;
+        }
+        
+        .stage-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        
+        .resistance-mode {
+            background: var(--bg-surface);
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-purple);
+            margin-bottom: 2rem;
+        }
+        
+        .quote-block {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            border-left: 3px solid var(--accent-green);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .tactics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .tactic-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        .tactic-card h4 { color: var(--accent-purple); margin-bottom: 0.5rem; }
+        
+        @media (max-width: 768px) {
+            .presentation-nav { padding: 0.5rem 1rem; }
+            .stage-title { font-size: 2rem; }
+            .nav-container { flex-direction: column; gap: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="presentation-nav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-home">🏠 Hub</a>
+            <div class="nav-controls">
+                <a href="ds-02.html" class="nav-btn">← Prev</a>
+                <a href="ds-04.html" class="nav-btn">Next →</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="slide-content">
+        <h1 class="stage-title">Resistance & Adaptation</h1>
+        <p class="stage-subtitle">Communities don't just surrender—they fight back</p>
+        
+        <div class="resistance-mode">
+            <h3>Tactical Responses</h3>
+            <div class="quote-block">
+                "Movements are making their own history, but in circumstances and with tools not entirely of their own choosing."
+            </div>
+            <p><strong>Core Truth:</strong> When platforms enshittify, communities develop sophisticated workarounds, migrate to new spaces, or subvert platform logic from within.</p>
+        </div>
+        
+        <div class="tactics-grid">
+            <div class="tactic-card">
+                <h4>Migration</h4>
+                <p>Twitter users fled to Mastodon/Bluesky in 2022-23. Tumblr users moved to Discord. Vine creators went to YouTube.</p>
+            </div>
+            <div class="tactic-card">
+                <h4>Subversion</h4>
+                <p>TikTok users say "unalive" to avoid moderation. Instagram influencers use carousel posts to game the algorithm.</p>
+            </div>
+            <div class="tactic-card">
+                <h4>Blackouts</h4>
+                <p>Reddit moderators coordinated subreddit shutdowns to protest API changes. Users weaponized the platform against itself.</p>
+            </div>
+            <div class="tactic-card">
+                <h4>Coded Language</h4>
+                <p>Activists develop internal slang to evade surveillance. Hashtags become double-coded—public meaning vs. community meaning.</p>
+            </div>
+            <div class="tactic-card">
+                <h4>Absurdist Resistance</h4>
+                <p>Italian Brainrot: Gen Alpha weaponizes nonsense against algorithmic overload. If the feed is garbage, make it literal garbage.</p>
+            </div>
+            <div class="tactic-card">
+                <h4>Alt Platforms</h4>
+                <p>Communities build their own spaces: Are.na for research, Cohost for art, Mastodon for decentralized social networking.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
