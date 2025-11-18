@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Vernaculars & Enshittification: Who Owns the Feed?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto+Mono:wght@400;707&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Saul Bass Inspired Color Palette & Typography */
+        :root {
+            --color-dark-primary: #1a1a1a; /* Near Black for backgrounds */
+            --color-dark-secondary: #2c2c2c; /* Slightly lighter dark for contrast */
+            --color-light-primary: #f8f8f8; /* Off-White for text/elements */
+            --color-accent-red: #D90429; /* Bold Red */
+            --color-accent-blue: #0077B6; /* Deep Blue */
+            --color-accent-yellow: #F4D03F; /* Vibrant Yellow */
+            --color-accent-green: #34A853; /* Complementary Green for some accents */
+
+            --font-display: 'Oswald', sans-serif;
+            --font-heading: 'Roboto Mono', monospace; /* More technical feel */
+            --font-body: 'Inter', sans-serif; /* Modern, legible body */
+
+            --slide-border-width: 8px;
+            --section-spacing: 4rem;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            line-height: 1.6;
+            color: var(--color-light-primary);
+            background-color: var(--color-dark-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden; /* Prevent horizontal scroll from skewed elements */
+        }
+
+        .container {
+            max-width: 960px; /* Slightly wider for presentation feel */
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* --- Header: Main Title Slide --- */
+        .header-slide {
+            background-color: var(--color-accent-red);
+            min-height: 100vh; /* Full viewport height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .header-slide::before,
+        .header-slide::after {
+            content: '';
+            position: absolute;
+            background-color: var(--color-dark-primary);
+            width: 150%;
+            height: 50%;
+            z-index: 1;
+        }
+        .header-slide::before {
+            top: -25%;
+            left: -25%;
+            transform: rotate(-10deg);
+        }
+        .header-slide::after {
+            bottom: -25%;
+            right: -25%;
+            transform: rotate(10deg);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            padding: 2rem;
+            max-width: 800px;
+        }
+
+        .header-content h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 8vw, 5.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--color-light-primary);
+            text-shadow: 6px 6px var(--color-dark-primary);
+        }
+
+        .header-content p {
+            font-family: var(--font-body);
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--color-light-primary);
+            margin: 0.8rem auto 0;
+            max-width: 700px;
+        }
+
+        /* --- Navigation Bar (Feed Filter Inspired) --- */
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: rgba(44, 44, 44, 0.95); /* Dark secondary with transparency */
+            backdrop-filter: blur(5px);
+            padding: 0.75rem 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 0.5rem;
+            justify-content: center;
+            border-bottom: 2px solid var(--color-accent-yellow);
+        }
+
+        .nav-button {
+            background-color: var(--color-dark-primary);
+            color: var(--color-light-primary);
+            border: 1px solid var(--color-accent-gray);
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px; /* Pill shape */
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        .nav-button:hover {
+            background-color: var(--color-accent-blue);
+            color: var(--color-dark-primary);
+            border-color: var(--color-accent-blue);
+        }
+
+        .nav-button.active {
+            background-color: var(--color-accent-red);
+            color: var(--color-light-primary);
+            border-color: var(--color-accent-red);
+            font-weight: 700;
+        }
+
+        /* --- Slide Sections: The "Feed Posts" --- */
+        .slide-section {
+            background-color: var(--color-dark-secondary);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            margin: var(--section-spacing) auto; /* Vertical spacing between slides */
+            position: relative;
+            border: var(--slide-border-width) solid var(--color-accent-blue); /* Default border */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            overflow: hidden; /* For internal skewed elements */
+            transition: all 0.4s ease-out;
+        }
+
+        /* Alternating slide border colors for visual rhythm */
+        .slide-section:nth-of-type(odd) {
+            border-color: var(--color-accent-red);
+        }
+        .slide-section:nth-of-type(even) {
+            border-color: var(--color-accent-yellow);
+            background-color: var(--color-dark-primary);
+        }
+
+        /* Internal section separator - Saul Bass inspired */
+        .slide-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background-color: var(--color-accent-green); /* Subtle internal accent */
+            transform: skewX(-15deg);
+            transform-origin: top left;
+            opacity: 0.2;
+        }
+        .slide-section:nth-of-type(even)::before {
+             background-color: var(--color-accent-blue);
+        }
+
+
+        .slide-section h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            color: var(--color-accent-blue);
+            text-align: center;
+            margin-bottom: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            padding-bottom: 0.8rem;
+            text-shadow: 2px 2px var(--color-dark-primary);
+        }
+        .slide-section:nth-of-type(odd) h2 {
+            color: var(--color-accent-red);
+        }
+        .slide-section:nth-of-type(even) h2 {
+            color: var(--color-accent-yellow);
+        }
+
+        .slide-section h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 100px;
+            height: 4px;
+            background-color: var(--color-light-primary);
+            border-radius: 2px;
+        }
+
+        .slide-section p {
+            font-family: var(--font-body);
+            font-size: clamp(1rem, 2.5vw, 1.15rem);
+            margin-bottom: 1.2rem;
+            line-height: 1.8;
+            color: var(--color-light-primary);
+            text-align: justify;
+        }
+
+        .slide-section ul {
+            list-style: none;
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .slide-section ul li {
+            position: relative;
+            margin-bottom: 0.8rem;
+            font-family: var(--font-body);
+            font-size: clamp(0.95rem, 2.4vw, 1.1rem);
+            color: var(--color-light-primary);
+            padding-left: 1.5rem;
+        }
+        .slide-section ul li::before {
+            content: '➤'; /* Custom bullet point */
+            color: var(--color-accent-yellow);
+            position: absolute;
+            left: 0;
+            font-size: 1.1em;
+            line-height: 1;
+        }
+        .slide-section:nth-of-type(odd) ul li::before {
+             color: var(--color-accent-blue);
+        }
+        
+        .slide-section strong {
+            color: var(--color-accent-yellow);
+        }
+        .slide-section:nth-of-type(odd) strong {
+             color: var(--color-accent-red);
+        }
+
+        /* Sub-headings for internal slide content */
+        h3 {
+            font-family: var(--font-heading);
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            color: var(--color-accent-green);
+            margin-top: 2.5rem;
+            margin-bottom: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 4px solid var(--color-accent-yellow);
+            padding-left: 1rem;
+        }
+        .slide-section:nth-of-type(even) h3 {
+            color: var(--color-accent-blue);
+            border-left-color: var(--color-accent-red);
+        }
+
+        /* --- Quote Blocks --- */
+        .quote-block {
+            background-color: var(--color-dark-primary);
+            color: var(--color-light-primary);
+            padding: 2.5rem 2rem;
+            margin: 3rem 0;
+            border-left: var(--slide-border-width) solid var(--color-accent-yellow);
+            font-family: var(--font-display);
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+            font-weight: 400;
+            line-height: 1.5;
+            text-align: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+        .quote-block.accent-red {
+            border-left-color: var(--color-accent-red);
+            background-color: var(--color-dark-secondary);
+        }
+        .quote-block.accent-blue {
+            border-left-color: var(--color-accent-blue);
+            background-color: var(--color-dark-primary);
+        }
+        .quote-block.accent-yellow {
+            border-left-color: var(--color-accent-green);
+            background-color: var(--color-accent-yellow);
+            color: var(--color-dark-primary);
+            font-family: var(--font-body); /* Change font for this block for contrast */
+            font-weight: 700;
+        }
+        .quote-block.accent-yellow .quote-source {
+            color: var(--color-dark-primary);
+        }
+
+        .quote-source {
+            display: block;
+            margin-top: 1.5rem;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-family: var(--font-heading);
+            font-style: italic;
+            color: var(--color-accent-gray);
+        }
+        .quote-block.accent-yellow .quote-source {
+             color: var(--color-dark-secondary);
+        }
+
+        /* Theoretical Terms Styling */
+        .term {
+            background-color: var(--color-accent-blue);
+            color: var(--color-light-primary);
+            padding: 0.15em 0.5em;
+            border-radius: 4px;
+            font-family: var(--font-heading);
+            font-size: 0.9em;
+            white-space: nowrap;
+            display: inline-block;
+            margin-right: 0.2em;
+            margin-bottom: 0.2em;
+        }
+        .slide-section:nth-of-type(odd) .term {
+            background-color: var(--color-accent-green);
+        }
+        .term.axiom { background-color: var(--color-accent-red); }
+        .term.model { background-color: var(--color-accent-yellow); color: var(--color-dark-primary);}
+        .term.operation { background-color: var(--color-accent-blue); }
+        .term.entity { background-color: var(--color-accent-green); }
+        .term.morphism { background-color: #8A2BE2; } /* Darker purple */
+        .term.olog { background-color: #FF5733; } /* Orange */
+
+        /* Citations */
+        .citation {
+            font-size: 0.7em;
+            vertical-align: super;
+            color: var(--color-accent-yellow);
+            font-weight: bold;
+            margin-left: 0.2em;
+        }
+        .slide-section:nth-of-type(odd) .citation {
+            color: var(--color-accent-blue);
+        }
+
+        /* Footer / Sources */
+        .sources-list {
+            background-color: var(--color-dark-primary);
+            padding: 4rem 2rem;
+            border-top: var(--slide-border-width) solid var(--color-accent-red);
+            margin-top: var(--section-spacing);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
+        }
+
+        .sources-list h2 {
+            color: var(--color-accent-yellow);
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .sources-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sources-list li {
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--color-light-primary);
+            border-bottom: 1px dashed rgba(248, 248, 248, 0.2);
+            padding-bottom: 0.7rem;
+        }
+        .sources-list li:last-child {
+            border-bottom: none;
+        }
+        .sources-list li a {
+            color: var(--color-accent-blue);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .sources-list li a:hover {
+            color: var(--color-accent-yellow);
+            text-decoration: underline;
+        }
+
+        /* Key Metrics / Engagement Indicators */
+        .key-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px dashed var(--color-accent-gray);
+        }
+
+        .metric-item {
+            background-color: var(--color-dark-secondary);
+            border: 2px solid var(--color-accent-yellow);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--color-light-primary);
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .slide-section:nth-of-type(odd) .metric-item {
+            border-color: var(--color-accent-blue);
+        }
+
+        .metric-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.6);
+        }
+        .metric-item .icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-accent-red);
+        }
+        .slide-section:nth-of-type(odd) .metric-item .icon {
+            color: var(--color-accent-yellow);
+        }
+
+        .discussion-prompt {
+            background-color: var(--color-dark-primary);
+            border: 2px solid var(--color-accent-green);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--color-light-primary);
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .header-content h1 {
+                letter-spacing: 1px;
+            }
+            .header-slide::before, .header-slide::after {
+                height: 30%;
+                top: -15%;
+                bottom: -15%;
+            }
+            .nav-bar {
+                padding: 0.5rem;
+                gap: 0.3rem;
+            }
+            .nav-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+                border-radius: 20px;
+            }
+            .slide-section {
+                padding: 2rem 1rem;
+                margin: 2.5rem auto;
+            }
+            .quote-block {
+                padding: 1.5rem 1rem;
+                margin: 2rem 0;
+            }
+            .key-metrics {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .metric-item {
+                width: 100%;
+            }
+        }
+        @media (max-width: 480px) {
+            .header-content h1 {
+                font-size: 2.5rem;
+            }
+            .header-content p {
+                font-size: 0.9rem;
+            }
+            .nav-button {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.6rem;
+            }
+            .slide-section h2 {
+                font-size: 2rem;
+            }
+            .slide-section h3 {
+                font-size: 1.2rem;
+            }
+            .slide-section p, .slide-section ul li {
+                font-size: 0.9rem;
+            }
+            .quote-block {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Title Slide -->
+    <div id="intro" class="header-slide">
+        <div class="header-content">
+            <h1>Platform Vernaculars & Enshittification: Who Owns the Feed?</h1>
+            <p><strong>Core Axiom:</strong> Platforms don’t just host culture—they feed on it. How do communities resist/adapt as platforms degrade through “enshittification”?</p>
+            <p><em>A College-Level Media Studies Analysis</em></p>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <button class="nav-button active" data-target="intro">Intro</button>
+        <button class="nav-button" data-target="theory">Anchors</button>
+        <button class="nav-button" data-target="vernaculars">Vernaculars</button>
+        <button class="nav-button" data-target="lifecycle">Enshittification</button>
+        <button class="nav-button" data-target="tiktok">TikTok Case</button>
+        <button class="nav-button" data-target="resistance">Resistance</button>
+        <button class="nav-button" data-target="cuban-twitter">Cuban Twitter</button>
+        <button class="nav-button" data-target="ai-slop">AI Slop</button>
+        <button class="nav-button" data-target="brainrot">Brainrot</button>
+        <button class="nav-button" data-target="ownership">Ownership</button>
+        <button class="nav-button" data-target="sources">Sources</button>
+    </nav>
+
+    <div class="container">
+        <!-- Slide 1: Theoretical Anchors -->
+        <section id="theory" class="slide-section">
+            <h2>Theoretical Anchors: Doctorow & Brock</h2>
+            <p>Our analytical framework is grounded in two key <span class="term axiom">axioms</span> of media studies: Cory Doctorow's theory of <span class="term model">Enshittification</span> and André Brock's work on <span class="term concept">Platform Vernaculars</span>.</p>
+
+            <h3><span class="term entity">Cory Doctorow</span>: The Enshittification Cycle <span class="citation">1</span></h3>
+            <ul>
+                <li><strong>Definition:</strong> Platforms progressively degrade their service quality to extract more value, first from users, then business customers, finally for shareholders. This is a <span class="term model">predictable decay model</span>.</li>
+                <li><strong>Core <span class="term axiom">Axiom</span>:</strong> Once users are <span class="term concept">locked in</span>, the platform shifts its loyalty from user experience to profit maximization.</li>
+            </ul>
+
+            <div class="quote-block accent-red">
+                <p>"Here is how platforms die: First, they are good to their users; then they abuse their users to make things better for their business customers; finally, they abuse those business customers to claw back all the value for themselves. Then, they die."</p>
+                <span class="quote-source">— Cory Doctorow, "The 'Enshittification' of TikTok" (WIRED, 2023)<span class="citation">2</span></span>
+            </div>
+
+            <h3><span class="term entity">André Brock</span>: Platform Vernaculars & Signifyin' <span class="citation">3</span></h3>
+            <ul>
+                <li><strong>Definition:</strong> Communities develop unique cultural practices, styles, and communication methods native to a specific platform. These are not merely adaptations, but active shapings of the platform's social space.</li>
+                <li><strong>Core <span class="term axiom">Axiom</span>:</strong> Marginalized communities, like <span class="term entity">Black Twitter</span>, actively <span class="term operation">resignify</span> platform affordances (e.g., hashtags) to create powerful cultural and political discourse.</li>
+            </ul>
+
+            <div class="quote-block accent-blue">
+                <p>"Black Twitter shattered deficit models of Black digital expertise through discourse, affordances, and networked culture. The disembodiment inherent to digital spaces accrues to Black virtuality as resignification..."</p>
+                <span class="quote-source">— André Brock, "The Illumination of Black Twitter" (Media Theory, 2024)<span class="citation">4</span></span>
+            </div>
+            <div class="key-metrics">
+                <div class="metric-item" data-discussion="Discuss the interplay between Doctorow's economic critique and Brock's cultural analysis. Are they complementary or in tension?">
+                    <div class="icon">💬</div>
+                    <div>Discuss Interplay</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 2: Platform Vernaculars in the Feed (Brock Focus) -->
+        <section id="vernaculars" class="slide-section">
+            <h2>Platform Vernaculars: Shaping the Digital Conversation</h2>
+            <p>Every major platform, from Instagram to YouTube, cultivates or has cultivated a unique <span class="term concept">vernacular</span>. These are the organic cultural forms, communication styles, and meme formats that emerge from user interaction with the platform's technical <span class="term concept">affordances</span>.</p>
+
+            <h3>The <span class="term entity">Black Twitter</span> <span class="term operation">Morphism</span>: Hashtags as Cultural Tools</h3>
+            <ul>
+                <li><strong>Observation:</strong> <span class="term entity">Black Twitter</span> emerged as a powerful subculture, actively shaping trending topics and discourse.</li>
+                <li><strong><span class="term operation">Operation</span> of the Hashtag:</strong> Brock identifies the hashtag as serving "triple duty as 'signifier,' 'sign,' and 'signified,' marking as it does the concept to be signified, the cultural context within which the tweet should be understood, and the 'call' awaiting a response." <span class="citation">5</span> This is a prime example of a <span class="term morphism">cultural re-purposing</span> of a technical feature.</li>
+                <li><strong>Impact:</strong> It allowed a cultural group to surface its own discourse, often "unconcerned with the mainstream gaze." <span class="citation">6</span></li>
+            </ul>
+
+            <div class="quote-block accent-yellow">
+                <p>"This obviously and intrinsically black tradition has been adopted by a community like Twitter that is, frankly, disproportionately not black."</p>
+                <span class="quote-source">— André Brock, "From the Blackhand Side: Twitter as a Cultural Conversation" (2012)<span class="citation">7</span></span>
+            </div>
+
+            <h3>From User-Driven to Platform-Driven Feeds</h3>
+            <ul>
+                <li><strong>Early Stages:</strong> Platforms (e.g., early YouTube vlogs, Instagram photo sharing) thrive when user-generated content and vernaculars are prioritized.</li>
+                <li><strong>Shift:</strong> As platforms grow, the <span class="term axiom">profit motive</span> leads to suppression or co-option of organic content. The <span class="term operation">feed algorithm</span> changes to favor sponsored or "engaging" content over genuine social interaction.</li>
+                <li><strong>Example:</strong> Early Facebook was about friends; later, it became "cramming our feeds with posts from media outlets and brands." <span class="citation">8</span></li>
+            </ul>
+            <div class="key-metrics">
+                <div class="metric-item" data-discussion="How do current platforms like Instagram or TikTok still allow for genuine vernaculars, despite algorithmic pressures?">
+                    <div class="icon">🤔</div>
+                    <div>Analyze Current Vernaculars</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: The Enshittification Lifecycle (Doctorow Focus) -->
+        <section id="lifecycle" class="slide-section">
+            <h2>The <span class="term model">Enshittification Lifecycle</span>: How Platforms Degrade</h2>
+            <p>Doctorow's <span class="term model">model of platform decay</span> describes a three-stage <span class="term operation">value extraction process</span> that leads to "enshittification":</p>
+
+            <ul class="numbered-list">
+                <li><strong>Stage 1: Courtship Phase (Good to Users)</strong>
+                    <ul>
+                        <li>Platform offers a superior service, often at a loss, to attract a critical mass of users.</li>
+                        <li><strong><span class="term axiom">Goal:</span></strong> Build network effects, get users <span class="term concept">locked in</span>.</li>
+                        <li><em>Example:</em> Early TikTok with its "magically good recommendation algorithm" for organic content. <span class="citation">9</span></li>
+                    </ul>
+                </li>
+                <li><strong>Stage 2: Extraction Phase (Abuse Users for Business Customers)</strong>
+                    <ul>
+                        <li>Once users are locked in, the platform shifts surplus value to <span class="term entity">business customers</span> (advertisers, corporate partners).</li>
+                        <li><strong><span class="term axiom">Goal:</span></strong> Monetize the captive audience by making it attractive for businesses.</li>
+                        <li><em>Example:</em> Amazon charging third-party sellers increasing fees and ad costs. <span class="citation">10</span></li>
+                    </ul>
+                </li>
+                <li><strong>Stage 3: Decay Phase (Abuse Business Customers for Self)</strong>
+                    <ul>
+                        <li>Finally, the platform extracts all remaining value for itself and its shareholders, even if it degrades service for businesses and users.</li>
+                        <li><strong><span class="term axiom">Result:</span></strong> The platform "becomes a useless pile of shit." <span class="citation">11</span></li>
+                        <li><em>Example:</em> Search results flooded with ads, feeds with sponsored content, algorithms working against user interests.</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="key-metrics">
+                <div class="metric-item" data-discussion="Consider Facebook's evolution. How clearly does it map to Doctorow's three stages?">
+                    <div class="icon">📊</div>
+                    <div>Map Facebook's Decay</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: Case Study: TikTok's "Heating" (Enshittification in Action) -->
+        <section id="tiktok" class="slide-section">
+            <h2>Case Study: <span class="term entity">TikTok</span> and the "<span class="term operation">Heating</span>" Mechanism</h2>
+            <p>TikTok serves as a prime example of Doctorow's enshittification in progress. Its initial success relied on an incredibly effective "For You" page algorithm that delighted users. However, this power was soon redirected.</p>
+
+            <h3>The "<span class="term operation">Heating</span>" Operation</h3>
+            <ul>
+                <li><strong>Discovery:</strong> A Forbes investigation revealed TikTok's secret "<span class="term operation">heating button</span>," allowing employees to artificially boost specific videos to millions of users. <span class="citation">12</span></li>
+                <li><strong>Purpose:</strong> This <span class="term operation">covert operation</span> was used to court <span class="term entity">influencers and brands</span>, granting them instant viral hits and luring them onto the platform.</li>
+                <li><strong>Doctorow's Metaphor:</strong> "TikTok is handing out giant teddy bears" to initially attract partners. <span class="citation">13</span> However, this free attention is not sustainable for the platform.</li>
+            </ul>
+
+            <div class="quote-block accent-red">
+                <p>"TikTok is not in the business of giving away giant teddy bears. TikTok is only going to funnel free attention to the people it wants to entrap until they are entrapped, then it will withdraw that attention and begin to monetize it."</p>
+                <span class="quote-source">— Cory Doctorow, "The 'Enshittification' of TikTok" (WIRED, 2023)<span class="citation">14</span></span>
+            </div>
+
+            <h3>Consequences for Creators and Users</h3>
+            <ul>
+                <li><strong>Withdrawal of Attention:</strong> Once creators are locked in, TikTok can "punish them by failing to deliver their videos to the users who subscribed to them." <span class="citation">15</span></li>
+                <li><strong>Algorithmic Shift:</strong> The feed is tuned to serve TikTok's interests (ad revenue) over user preferences. Every time a user sees a desired video, TikTok "loses a chance to show you a video it wants you to see." <span class="citation">16</span></li>
+                <li><strong><span class="term axiom">Enshittification Confirmed:</span></strong> Doctorow concludes, "The enshittification has begun." <span class="citation">17</span></li>
+            </ul>
+            <div class="key-metrics">
+                <div class="metric-item" data-discussion="How do users perceive these algorithmic shifts on platforms like YouTube or Instagram? Do they recognize 'heating' or simply feel disengaged?">
+                    <div class="icon">👁️</div>
+                    <div>User Perception of Algos</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: Communities Adapting and Resisting Platform Decline -->
+        <section id="resistance" class="slide-section">
+            <h2>Resistance & Adaptation: Communities Push Back</h2>
+            <p>When platforms enter the <span class="term model">decay phase</span>, communities don't passively accept degradation. They develop various <span class="term operation">resistance strategies</span> and <span class="term operation">adaptive vernaculars</span>.</p>
+
+            <h3>Strategies of Adaptation and Migration</h3>
+            <ul>
+                <li><strong>Platform Migration:</strong> Users may move to alternative platforms (e.g., Twitter users to Mastodon/Bluesky). However, network effects create significant <span class="term concept">lock-in</span>, making mass migration challenging. "You may love your friends, but half the time you can’t agree on what movie to see... Forget it." <span class="citation">18</span></li>
+                <li><strong>Internal Workarounds:</strong> Communities devise new tactics within existing platforms:
+                    <ul>
+                        <li>Posting full content on Facebook to bypass throttled links.</li>
+                        <li>Using Instagram "carousel photo dumps" to gain algorithmic boosts.</li>
+                        <li>Employing <span class="term operation">coded language</span> (e.g., "unalive" on TikTok) to evade content moderation.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Networked Protest and State Manipulation (<span class="term entity">Zeynep Tufekci</span>)</h3>
+            <p>Tufekci's work introduces the <span class="term model">capacity vs. signal</span> <span class="term olog">olog</span>: protests are a "signal" of an underlying capacity to effect change. <span class="citation">19</span> Social media empowers movements but also introduces vulnerabilities.</p>
+            <ul>
+                <li><strong>Power of Coordination:</strong> During the Arab Spring, activists used platforms to coordinate, disseminate narratives, and even bypass government internet blackouts. <span class="citation">20</span> This exemplifies communities seizing control of the information feed.</li>
+                <li><strong>Fragility & Countermeasures:</strong> Platforms' advantages (speed, scale) come with weaknesses (surveillance, misinformation). Governments learn to exploit these through "censorship through distraction" – flooding platforms with irrelevant or misleading information to "muddy the online waters." <span class="citation">21, 22</span></li>
+            </ul>
+            <div class="key-metrics">
+                <div class="metric-item" data-discussion="What are the ethical implications when governments use platform tactics, like 'attention flooding,' against their citizens?">
+                    <div class="icon">⚖️</div>
+                    <div>Ethics of State Tactics</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: The Cuban Twitter Plot (Platform Colonization) -->
+        <section id="cuban-twitter" class="slide-section">
+            <h2><span class="term entity">ZunZuneo</span>: The "Cuban Twitter" Plot (Platform Colonization)</h2>
+            <p>The <span class="term entity">ZunZuneo</span> project, dubbed "Cuban Twitter," serves as a stark example of deliberate platform creation for political <span class="term operation">manipulation</span> – a form of <span class="term concept">platform colonization</span>.</p>
+
+            <h3><span class="term operation">Astroturfing</span> Architecture <span class="citation">23</span></h3>
+            <ul>
+                <li><strong>Covert Operation:</strong> Created by the U.S. government (USAID) in 2010, ZunZuneo was offered as a "free text service" to Cubans, attracting 40,000 users. Its ties to the U.S. government were obscured through offshore companies. <span class="citation">24, 25</span></li>
+                <li><strong>Phased <span class="term operation">Content Injection</span>:</strong>
+                    <ol>
+                        <li>Initially, "non-controversial content" (sports, music) built a user base.</li>
+                        <li>The plan was to "later introduce political messages through social bots to encourage dissent." <span class="citation">23</span></li>
+                    </ol>
+                </li>
+                <li><strong>Data Collection:</strong> The platform also gathered intelligence on users' "political leanings" and "openness." <span class="citation">24</span></li>
+            </ul>
+
+            <div class="quote-block accent-blue">
+                <p>"The developers aimed to use 'non-controversial content,' such as sports and music, to build up subscribers and then introduce political messages through social bots to encourage dissent in an astroturfing initiative."</p>
+                <span class="quote-source">— Wikipedia: ZunZuneo (2014) / Associated Press investigation<span class="citation">23</span></span>
+            </div>
+
+            <h3><span class="term axiom">Control of Platform = Control of Narrative</span></h3>
+            <ul>
+                <li><strong><span class="term axiom">Axiom:</span></strong> This episode demonstrates that direct control over a platform (infrastructure, content flow) translates directly into control over a community's narrative and potential for <span class="term operation">behavioral influence</span>.</li>
+                <li><strong><span class="term axiom">Outcome:</span></strong> ZunZuneo was discontinued in 2012 due to funding, but it highlights the powerful prize of "owning the feed" for geopolitical actors, not just corporations. <span class="citation">23, 26</span></li>
+            </ul>
+            <div class="key-metrics">
+                <div class="metric-item" data-discussion="How does the ZunZuneo case complicate our understanding of 'platform ownership' beyond corporate entities?">
+                    <div class="icon">🕵️</div>
+                    <div>Platform as Proxy State</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: The Rise of AI "Slop" (New Enshittification) -->
+        <section id="ai-slop" class="slide-section">
+            <h2>The Rise of <span class="term entity">AI “Slop”</span>: New Phase of Enshittification</h2>
+            <p>The proliferation of generative AI tools (2023-2025) has introduced a new, accelerated phase of platform degradation. John Oliver describes this deluge as "<span class="term concept">AI slop</span>" – cheap, algorithmically-produced content flooding our feeds. <span class="citation">27</span></p>
+
+            <h3>Characteristics of <span class="term entity">AI Slop</span></h3>
+            <ul>
+                <li><strong>Mass Production:</strong> AI tools make it "very easy to mass produce and flood social media sites with cheap spam, misinformation, and otherwise empty, low-quality digital stuff." <span class="citation">28</span></li>
+                <li><strong>Engagement Feedback Loops:</strong> AI generates content, bots comment, and real people struggle to differentiate. <span class="citation">28</span> Platforms actively inject algorithmic content, allowing slop to "sneak in without your permission." <span class="citation">29</span></li>
+                <li><strong>Corrosion of Reality:</strong> Oliver warns that AI slop is "worryingly corrosive to the general concept of objective reality." The mere existence of convincing fakes empowers bad actors to dismiss real content as fabricated (the "liar's dividend"). <span class="citation">30</span></li>
+            </ul>
+
+            <div class="quote-block accent-red">
+                <p>"AI slop can be somewhat lucrative for its creators, massively lucrative for the platforms that use it to drive engagement, and worryingly corrosive to the general concept of objective reality."</p>
+                <span class="quote-source">— John Oliver, "AI Slop" segment, Last Week Tonight (June 2025)<span class="citation">30</span></span>
+            </div>
+
+            <h3>Implications for Creativity & Revenue</h3>
+            <ul>
+                <li><strong>Creator Displacement:</strong> Platforms may favor AI-generated content over human creators because it's cheap and abundant, displacing artists (e.g., macramé artist case). <span class="citation">31</span></li>
+                <li><strong>"Volume Game":</strong> AI slop operates as a "volume game, like any form of spam," with "slop influencers" teaching others how to monetize this low-quality content. <span class="citation">32</span></li>
+            </ul>
+            <div class="key-metrics">
+                <div class="metric-item" data-discussion="How do developments like Sora 2 or Meta's generative trends fit into Oliver's 'AI Slop' definition?">
+                    <div class="icon">🤖</div>
+                    <div>Sora 2 & Meta's AI</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 8: Italian Brainrot (Memetic Resistance or Decay?) -->
+        <section id="brainrot" class="slide-section">
+            <h2><span class="term entity">Italian Brainrot</span>: A Vernacular of Machine Delirium</h2>
+            <p><span class="term entity">Italian Brainrot</span> is a recent <span class="term concept">memetic trend</span> that embodies the peculiar new <span class="term vernacular">platform vernacular</span> emerging from the age of AI slop. It's characterized by absurd, AI-generated animal characters with pseudo-Italian names and nonsensical voiceovers, rapidly spreading across TikTok and Instagram. <span class="citation">3, 9, 33</span></p>
+
+            <h3>The <span class="term operation">Feedback Loop</span> of Absurdity</h3>
+            <ul>
+                <li><strong>Gen Z/Alpha Appeal:</strong> Popular among younger generations "because it's stupid, funny, and veeeery addictive." <span class="citation">3</span> The term "brain rot" itself acknowledges the stupefying effect of mindless scrolling through AI-generated content. <span class="citation">34</span></li>
+                <li><strong>Algorithmic Amplification:</strong> TikTok's algorithm boosts bizarre AI videos due to high "WTF" engagement, creating a feedback loop where more such content floods the feed. <span class="citation">3, 35</span></li>
+                <li><strong>Ephemeral but Real:</strong> While fleeting "internet junk," these memes become genuine cultural artifacts for participants, spawning lore, in-jokes, and even real-world commercialization (Roblox games, merchandise). <span class="citation">36</span></li>
+            </ul>
+
+            <div class="quote-block accent-yellow">
+                <p>"In a time when the memetic universe is becoming increasingly fragmented... Italian Brainrot stands out as a rare case of a truly mainstream meme. It's deeply rooted in internet culture with its taste for nonsense, absurdity and political incorrectness."</p>
+                <span class="quote-source">— Valentina Tanni, quoted in Network Cultures (2025)<span class="citation">3</span></span>
+            </div>
+
+            <h3><span class="term concept">Machine Delirium</span> & The Polycrisis</h3>
+            <ul>
+                <li><strong>Symptomatic Response:</strong> Some analyses suggest Brainrot memes are products of "machinic delirium" and serve as an "empathic symbol of entropy" in response to the "unfolding 'polycrisis.'" <span class="citation">37</span></li>
+                <li><strong>New Vernacular of Resistance?</strong> Is it genuine cultural resistance against overwhelming digital noise, or merely a symptom of cognitive overload and a descent into shared digital absurdity? This remains an open question.</li>
+            </ul>
+            <div class="key-metrics">
+                <div class="metric-item" data-discussion="How does Italian Brainrot challenge our traditional definitions of 'culture' and 'creativity' in the age of AI?">
+                    <div class="icon">🧠</div>
+                    <div>Culture in AI Age</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 9: Who Owns the Feed? (Conclusion) -->
+        <section id="ownership" class="slide-section">
+            <h2>Who Owns the Feed? <span class="term olog">A Tug-of-War Olog</span></h2>
+            <p>The central question of "who owns the feed" reveals a continuous <span class="term morphism">power dynamic</span> between platform owners and user communities. It's not a simple binary, but a complex <span class="term olog">olog</span> of contested control.</p>
+
+            <h3>Platform Owners: The Algorithmic Grip</h3>
+            <ul>
+                <li><strong>Infrastructure Control:</strong> Platforms set the rules, design the algorithms, and ultimately shape what content is seen. They assert this control to serve profit motives.</li>
+                <li><strong>Examples:</strong> Amazon's ad-filled search results, TikTok's "heating," Meta's injection of recommended content ("we, not you, decide what appears on your feed"). <span class="citation">38</span></li>
+                <li><strong>AI's Role:</strong> AI slop grants platforms a new tool to fill feeds without relying on human creators, raising the specter of a "dystopian internet" of bot-generated content consumed by passive humans. <span class="citation">39</span></li>
+            </ul>
+
+            <h3>User Communities: Cultural Leverage & Resistance</h3>
+            <ul>
+                <li><strong>Content & Vitality:</strong> Platforms depend on user-generated content and social energy to thrive. This provides communities with leverage.</li>
+                <li><strong>Vernacular Power:</strong> <span class="term entity">Black Twitter's</span> cultural cachet demonstrated how communities can make a platform compelling, forcing acknowledgement.</li>
+                <li><strong>Meaning-Making:</strong> Communities still determine what is "cool" or "meaningful," as seen with <span class="term entity">Italian Brainrot</span>. Algorithms can amplify, but not always create genuine cultural resonance.</li>
+                <li><strong>Active Resistance:</strong> From migration to workarounds and direct protest, communities find ways to adapt, subvert, or abandon platforms when <span class="term model">enshittification</span> becomes unbearable.</li>
+            </ul>
+
+            <h3>The Future of the Feed: An Unfolding <span class="term olog">Olog</span></h3>
+            <p>The balance of power is shifting, increasingly favoring platforms due to <span class="term concept">lock-in</span> and the rise of AI. However, understanding this <span class="term model">enshittification model</span> and recognizing collective user power is crucial.</p>
+            <ul>
+                <li><strong>Optimistic <span class="term axiom">Axiom</span>:</strong> When platforms degrade too far, users will seek or build new, more open spaces where new cultures can flourish.</li>
+                <li><strong>Pessimistic <span class="term axiom">Axiom</span>:</strong> All large platforms may converge on the same extractive model, leading to an ever more manipulated, "weird" feed that real communities struggle to reclaim.</li>
+            </ul>
+
+            <div class="quote-block accent-blue">
+                <p>"The feed is where our public life and culture increasingly unfolds – so it’s heartening to see people ask this very question. As we’ve explored, history and current trends show an ongoing tug-of-war."</p>
+                <span class="quote-source">— Course Synthesis</span>
+            </div>
+            <div class="key-metrics">
+                <div class="metric-item" data-discussion="What actionable steps can individuals or collective movements take to reclaim agency over their digital feeds?">
+                    <div class="icon">✊</div>
+                    <div>Reclaiming Agency</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sources Section -->
+        <section id="sources" class="sources-list">
+            <h2>Key Sources & Further Reading</h2>
+            <ul>
+                <li>André Brock, “From the Blackhand Side: Twitter as a Cultural Conversation.” Journal of Broadcasting & Electronic Media 56(4): 529–549 (2012).<span class="citation">5, 6, 7, 18</span></li>
+                <li>Cory Doctorow, “The ‘Enshittification’ of TikTok.” Wired (Jan 2023).<span class="citation">1, 2, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 38</span></li>
+                <li>Zeynep Tufekci, <em>Twitter and Tear Gas: The Power and Fragility of Networked Protest</em>. Excerpt in Wired (May 2017).<span class="citation">19, 20, 21, 22</span></li>
+                <li>Associated Press via The Guardian, “US secretly created ‘Cuban Twitter’ to stir unrest and undermine government” (Apr 2014).<span class="citation">23, 24, 25, 26</span></li>
+                <li>John Oliver, “AI Slop” segment on Last Week Tonight (HBO, June 2025) – recap in The Guardian.<span class="citation">27, 28, 29, 30, 31, 32</span></li>
+                <li>Elle Hunt, “How Gen Alpha went wild for Italian brain rot animals” – The Guardian (June 2025).<span class="citation">3, 33</span></li>
+                <li>Safiyah Riddle, “Meet Ballerina Cappuccina, the AI sensation with a cappuccino teacup head” – AP News (July 2025).<span class="citation">35, 36</span></li>
+                <li>Wikipedia, "Enshittification".<span class="citation">1</span></li>
+                <li>Wikipedia, "Italian Brainrot".<span class="citation">9, 33, 34</span></li>
+                <li>Futurism, "John Oliver Aghast at How AI Slop Is Devouring the Web."<span class="citation">28</span></li>
+                <li>GDI Gottlieb Duttweiler Institute, "Cory Doctorow: 'enshittification' or why platforms became useless."<span class="citation">11, 28</span></li>
+                <li>YouTube, "How the Internet Was Ensh*ttified | Cory Doctorow & Jared Henderson."<span class="citation">8, 10, 38</span></li>
+                <li>MIT Comparative Media Studies/Writing, "Podcast: André Brock, 'Black + Twitter: A Cultural Informatics Approach'."<span class="citation">4</span></li>
+                <li>Semantic Scholar, "From the Blackhand Side: Twitter as a Cultural Conversation."<span class="citation">5, 6, 7</span></li>
+                <li>The Borgen Project, "USAID Embroiled in 'Cuban Twitter' Scandal."<span class="citation">24, 25</span></li>
+                <li>ResearchGate, "Twitter and Tear Gas: The Power and Fragility of Networked Protest."<span class="citation">19, 20, 21, 22</span></li>
+                <li>Medium, "My McLuhan lecture on enshittification | by Cory Doctorow."<span class="citation">1, 2, 11, 14, 15, 17, 18, 38</span></li>
+                <li>Scraps from the Loft, "AI Slop: Last Week Tonight with John Oliver | Transcript."<span class="citation">27, 28, 29, 30, 31, 32</span></li>
+                <li>Apple Podcasts, "Hard Fork, Italian Brain Rot."<span class="citation">35, 39</span></li>
+            </ul>
+        </section>
+    </div>
+
+    <script>
+        const navButtons = document.querySelectorAll('.nav-bar .nav-button');
+        const slideSections = document.querySelectorAll('.slide-section');
+        const headerSlide = document.getElementById('intro');
+
+        // Function to update active state of nav buttons and scroll to section
+        function scrollToSection(targetId) {
+            let targetElement;
+            if (targetId === 'intro') {
+                targetElement = headerSlide;
+            } else {
+                targetElement = document.getElementById(targetId);
+            }
+
+            if (targetElement) {
+                // Remove active from all buttons
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active to the current button
+                const activeButton = document.querySelector(`.nav-button[data-target="${targetId}"]`);
+                if (activeButton) {
+                    activeButton.classList.add('active');
+                }
+                
+                // Scroll to the element
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: (targetId === 'intro' ? 'center' : 'start') // Center for intro, start for others
+                });
+            }
+        }
+
+        // Event listeners for navigation buttons
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.dataset.target;
+                scrollToSection(targetId);
+            });
+        });
+
+        // Intersection Observer to highlight nav button as sections come into view
+        const observerOptions = {
+            root: null, // viewport
+            rootMargin: '-50% 0px -49% 0px', // A section is "active" when its middle is in the middle of the viewport
+            threshold: 0 // As soon as any part of the section is visible
+        };
+
+        const sectionObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Remove active from all buttons
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+
+                    // Add active to the corresponding button
+                    const targetId = entry.target.id;
+                    const activeButton = document.querySelector(`.nav-button[data-target="${targetId}"]`);
+                    if (activeButton) {
+                        activeButton.classList.add('active');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections including the header slide
+        sectionObserver.observe(headerSlide);
+        slideSections.forEach(section => {
+            sectionObserver.observe(section);
+        });
+
+        // Initialize active state for the first button on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialActiveButton = document.querySelector('.nav-button[data-target="intro"]');
+            if (initialActiveButton) {
+                initialActiveButton.classList.add('active');
+            }
+        });
+
+        // Engagement button functionality
+        document.querySelectorAll('.metric-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const discussionPrompt = this.dataset.discussion;
+                const existingPrompt = this.querySelector('.discussion-prompt');
+
+                if (existingPrompt) {
+                    // If prompt exists, toggle its visibility
+                    existingPrompt.style.display = existingPrompt.style.display === 'block' ? 'none' : 'block';
+                } else {
+                    // If no prompt, create and append it
+                    const promptDiv = document.createElement('div');
+                    promptDiv.classList.add('discussion-prompt');
+                    promptDiv.innerHTML = `<strong>Discussion Prompt:</strong> ${discussionPrompt}`;
+                    this.appendChild(promptDiv);
+                    promptDiv.style.display = 'block'; // Make it visible
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
