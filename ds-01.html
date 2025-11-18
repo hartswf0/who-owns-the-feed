@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Vernaculars & Enshittification: Who Owns the Feed?</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary: #34a853;
+            --accent: #ea4335;
+            --background: #f8f9fa;
+            --surface: #ffffff;
+            --text: #202124;
+            --text-secondary: #5f6368;
+            --border: #dadce0;
+            --shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: var(--surface);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav li {
+            margin-left: 24px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        .hero {
+            padding: 60px 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), #6c5ce7);
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feed {
+            background-color: var(--surface);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .feed-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .feed-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .post {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.2s;
+        }
+
+        .post:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            margin-right: 12px;
+        }
+
+        .post-meta {
+            flex: 1;
+        }
+
+        .author {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .timestamp {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .post-content {
+            margin-bottom: 16px;
+        }
+
+        .quote {
+            background-color: rgba(26, 115, 232, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .action-btn:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: var(--text);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .widget {
+            background-color: var(--surface);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .widget-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        .widget-content {
+            padding: 20px;
+        }
+
+        .thinker-list {
+            list-style: none;
+        }
+
+        .thinker-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .thinker-item:last-child {
+            border-bottom: none;
+        }
+
+        .thinker-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            margin-right: 12px;
+        }
+
+        .thinker-name {
+            font-weight: 500;
+        }
+
+        .hashtag-list {
+            list-style: none;
+        }
+
+        .hashtag-item {
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .hashtag {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .count {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        footer {
+            background-color: var(--surface);
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            nav li {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container nav-container">
+            <div class="logo">PlatformFeed</div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Thinkers</a></li>
+                    <li><a href="#">Concepts</a></li>
+                    <li><a href="#">Resources</a></li>
+                    <li><a href="#">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Platform Vernaculars & Enshittification</h1>
+            <p>Who Owns the Feed? Exploring how platforms feed on culture as communities resist degradation</p>
+        </div>
+    </section>
+
+    <div class="container main-content">
+        <div class="feed">
+            <div class="feed-header">
+                <div class="feed-title">The Conversation</div>
+                <div class="feed-filters">
+                    <button class="action-btn">Latest</button>
+                    <button class="action-btn">Popular</button>
+                </div>
+            </div>
+
+            <!-- Post 1: Core Concept -->
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar" style="background-color: #6c5ce7;">CV</div>
+                    <div class="post-meta">
+                        <div class="author">Core Vernacular</div>
+                        <div class="timestamp">Posted November 18, 2024</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p><strong>Platforms don't just host culture—they feed on it.</strong></p>
+                    <p>Digital platforms have transformed from passive containers of culture to active participants that extract value from user-generated content, social interactions, and community formation.</p>
+                    <div class="quote">
+                        "Platforms are not neutral intermediaries but active participants in shaping culture, politics, and sociality." - José van Dijck
+                    </div>
+                    <p>This symbiotic yet parasitic relationship forms the foundation of platform vernaculars—the distinctive communicative practices that emerge within platform ecosystems.</p>
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn">👍 42</button>
+                    <button class="action-btn">💬 18</button>
+                    <button class="action-btn">🔄 7</button>
+                </div>
+            </div>
+
+            <!-- Post 2: Doctorow -->
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar" style="background-color: #e17055;">CD</div>
+                    <div class="post-meta">
+                        <div class="author">Cory Doctorow</div>
+                        <div class="timestamp">Posted November 15, 2024</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p><strong>The "Enshittification" lifecycle of platforms</strong></p>
+                    <p>My concept of enshittification describes the predictable degradation of digital platforms through a three-stage process:</p>
+                    <ol>
+                        <li>Platforms serve users first to attract them</li>
+                        <li>Then they serve business customers to monetize</li>
+                        <li>Finally, they extract value from both groups until collapse</li>
+                    </ol>
+                    <div class="quote">
+                        "First, they are good to their users; then they abuse their users to make things better for their business customers; finally, they abuse those business customers to claw back all the value for themselves. Then, they die." - Cory Doctorow
+                    </div>
+                    <p>TikTok exemplifies this trajectory, beginning with user-friendly algorithms, then prioritizing advertisers, and now facing potential collapse as it extracts maximum value from all sides.</p>
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn">👍 67</button>
+                    <button class="action-btn">💬 23</button>
+                    <button class="action-btn">🔄 14</button>
+                </div>
+            </div>
+
+            <!-- Post 3: Brock -->
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar" style="background-color: #00b894;">AB</div>
+                    <div class="post-meta">
+                        <div class="author">André Brock</div>
+                        <div class="timestamp">Posted November 12, 2024</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p><strong>From the Blackhand Side: Digital Blackness and Platform Resistance</strong></p>
+                    <p>Black users develop distinctive platform vernaculars that resist dominant platform logics while creating spaces for community and cultural expression.</p>
+                    <div class="quote">
+                        "Black Twitter exemplifies how marginalized communities create their own platform vernaculars that resist, subvert, and reimagine platform affordances." - André Brock
+                    </div>
+                    <p>These vernaculars demonstrate how communities adapt platform features to serve their own cultural needs, often in ways that platform designers never anticipated.</p>
+                    <p>When platforms attempt to monetize or control these vernacular practices, they often trigger resistance or migration to new spaces.</p>
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn">👍 58</button>
+                    <button class="action-btn">💬 31</button>
+                    <button class="action-btn">🔄 9</button>
+                </div>
+            </div>
+
+            <!-- Post 4: Tufekci -->
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar" style="background-color: #fd79a8;">ZT</div>
+                    <div class="post-meta">
+                        <div class="author">Zeynep Tufekci</div>
+                        <div class="timestamp">Posted November 10, 2024</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p><strong>Twitter and Tear Gas: Platform Power in Social Movements</strong></p>
+                    <p>Platforms provide crucial infrastructure for social movements while simultaneously creating vulnerabilities through their corporate control and algorithmic governance.</p>
+                    <div class="quote">
+                        "The same tools that empower protesters also empower the powerful to monitor, manipulate, and suppress dissent." - Zeynep Tufekci
+                    </div>
+                    <p>The enshittification process threatens the very utility that made these platforms valuable to social movements in the first place, as algorithmic changes and monetization strategies disrupt organic community formation.</p>
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn">👍 45</button>
+                    <button class="action-btn">💬 17</button>
+                    <button class="action-btn">🔄 6</button>
+                </div>
+            </div>
+
+            <!-- Post 5: AI Slop -->
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar" style="background-color: #a29bfe;">JO</div>
+                    <div class="post-meta">
+                        <div class="author">John Oliver</div>
+                        <div class="timestamp">Posted November 8, 2024</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p><strong>AI Slop: How Generated Content Accelerates Enshittification</strong></p>
+                    <p>The proliferation of AI-generated content represents a new phase in platform degradation, flooding feeds with low-quality, synthetic material that displaces human creativity.</p>
+                    <div class="quote">
+                        "AI slop is the logical endpoint of enshittification—platforms prioritizing cheap, scalable content over meaningful human interaction." - John Oliver
+                    </div>
+                    <p>As platforms increasingly favor AI-generated content for its predictability and monetization potential, they accelerate the erosion of the authentic communities that originally gave them value.</p>
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn">👍 72</button>
+                    <button class="action-btn">💬 42</button>
+                    <button class="action-btn">🔄 19</button>
+                </div>
+            </div>
+
+            <!-- Post 6: Hard Fork -->
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar" style="background-color: #ffeaa7;">HF</div>
+                    <div class="post-meta">
+                        <div class="author">Hard Fork</div>
+                        <div class="timestamp">Posted November 5, 2024</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p><strong>Italian Brainrot: Memetic Trends as Platform Vernaculars</strong></p>
+                    <p>Extreme memetic trends like "Italian Brainrot" demonstrate how platform vernaculars can evolve into almost incomprehensible subcultural languages.</p>
+                    <div class="quote">
+                        "These hyper-niche vernaculars represent both community bonding and platform-induced fragmentation of public discourse." - Kevin Roose
+                    </div>
+                    <p>Such trends highlight the tension between authentic community expression and platform algorithms that reward engagement at any cost, including cultural coherence.</p>
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn">👍 38</button>
+                    <button class="action-btn">💬 25</button>
+                    <button class="action-btn">🔄 11</button>
+                </div>
+            </div>
+
+            <!-- Post 7: Cuban Twitter -->
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar" style="background-color: #74b9ff;">US</div>
+                    <div class="post-meta">
+                        <div class="author">U.S. Policy Case</div>
+                        <div class="timestamp">Posted November 3, 2024</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p><strong>The "Cuban Twitter" Case: Platform as Political Instrument</strong></p>
+                    <p>The U.S. creation of ZunZuneo, dubbed "Cuban Twitter," reveals how platforms can be designed as tools for political influence rather than organic community building.</p>
+                    <div class="quote">
+                        "The Cuban Twitter case demonstrates that platforms are never neutral—they embed the values and agendas of their creators." - Associated Press Investigation
+                    </div>
+                    <p>This case highlights the fundamental question of who owns and controls our digital spaces, and to what ends these spaces are ultimately directed.</p>
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn">👍 41</button>
+                    <button class="action-btn">💬 28</button>
+                    <button class="action-btn">🔄 8</button>
+                </div>
+            </div>
+
+            <!-- Post 8: Writing Doom -->
+            <div class="post">
+                <div class="post-header">
+                    <div class="avatar" style="background-color: #55efc4;">WD</div>
+                    <div class="post-meta">
+                        <div class="author">Writing Doom</div>
+                        <div class="timestamp">Posted October 30, 2024</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p><strong>Writing Doom: Creative Resistance to Platform Constraints</strong></p>
+                    <p>The short film "Writing Doom" explores how creative communities develop workarounds and alternative practices when platforms fail to serve their needs.</p>
+                    <div class="quote">
+                        "When platforms enshittify, creative communities don't just leave—they often develop sophisticated practices to reclaim agency within constrained systems." - Film Analysis
+                    </div>
+                    <p>These creative adaptations represent a form of vernacular innovation that pushes against platform limitations while demonstrating the enduring human need for meaningful connection and expression.</p>
+                </div>
+                <div class="post-actions">
+                    <button class="action-btn">👍 53</button>
+                    <button class="action-btn">💬 36</button>
+                    <button class="action-btn">🔄 12</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="widget">
+                <div class="widget-header">Featured Thinkers</div>
+                <div class="widget-content">
+                    <ul class="thinker-list">
+                        <li class="thinker-item">
+                            <div class="thinker-avatar" style="background-color: #e17055;">CD</div>
+                            <div class="thinker-name">Cory Doctorow</div>
+                        </li>
+                        <li class="thinker-item">
+                            <div class="thinker-avatar" style="background-color: #00b894;">AB</div>
+                            <div class="thinker-name">André Brock</div>
+                        </li>
+                        <li class="thinker-item">
+                            <div class="thinker-avatar" style="background-color: #fd79a8;">ZT</div>
+                            <div class="thinker-name">Zeynep Tufekci</div>
+                        </li>
+                        <li class="thinker-item">
+                            <div class="thinker-avatar" style="background-color: #a29bfe;">JO</div>
+                            <div class="thinker-name">John Oliver</div>
+                        </li>
+                        <li class="thinker-item">
+                            <div class="thinker-avatar" style="background-color: #ffeaa7;">HF</div>
+                            <div class="thinker-name">Hard Fork</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="widget">
+                <div class="widget-header">Trending Concepts</div>
+                <div class="widget-content">
+                    <ul class="hashtag-list">
+                        <li class="hashtag-item">
+                            <span class="hashtag">#Enshittification</span>
+                            <span class="count">128</span>
+                        </li>
+                        <li class="hashtag-item">
+                            <span class="hashtag">#PlatformVernaculars</span>
+                            <span class="count">96</span>
+                        </li>
+                        <li class="hashtag-item">
+                            <span class="hashtag">#AISlop</span>
+                            <span class="count">84</span>
+                        </li>
+                        <li class="hashtag-item">
+                            <span class="hashtag">#WhoOwnsTheFeed</span>
+                            <span class="count">73</span>
+                        </li>
+                        <li class="hashtag-item">
+                            <span class="hashtag">#DigitalResistance</span>
+                            <span class="count">65</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="widget">
+                <div class="widget-header">Key Questions</div>
+                <div class="widget-content">
+                    <p>How do communities resist/adapt as platforms degrade through "enshittification"?</p>
+                    <p>What happens when platforms prioritize monetization over user experience?</p>
+                    <p>How does AI-generated content change platform dynamics?</p>
+                    <p>Who ultimately controls our digital public spaces?</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Platform Vernaculars & Enshittification: Who Owns the Feed? | Media Studies Course | November 18, 2024</p>
+            <p>This presentation format explores how platform design shapes discourse through a social media interface.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple interaction for the action buttons
+        document.querySelectorAll('.action-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const text = this.textContent;
+                const parts = text.split(' ');
+                let count = parseInt(parts[1]) || 0;
+                count++;
+                parts[1] = count;
+                this.textContent = parts.join(' ');
+                
+                // Add visual feedback
+                this.style.color = '#1a73e8';
+                this.style.fontWeight = '600';
+                
+                setTimeout(() => {
+                    this.style.color = '';
+                    this.style.fontWeight = '';
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>
