@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Vernaculars & Enshittification: Who Owns the Feed?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Saul Bass Inspired Color Palette & Typography */
+        :root {
+            --color-dark: #121212; /* Near Black */
+            --color-light: #F0F0F0; /* Off-White */
+            --color-accent-red: #D90429; /* Bold Red */
+            --color-accent-blue: #0077B6; /* Deep Blue */
+            --color-accent-yellow: #F4D03F; /* Vibrant Yellow */
+            --color-accent-gray: #4A4A4A; /* Dark Gray for contrast */
+            --font-primary: 'Oswald', sans-serif;
+            --font-secondary: 'Roboto', sans-serif;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-secondary);
+            line-height: 1.6;
+            color: var(--color-light);
+            background-color: var(--color-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            scroll-behavior: smooth; /* For smoother navigation if implemented */
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Header - Bold, Geometric */
+        .header {
+            background-color: var(--color-accent-red);
+            color: var(--color-light);
+            padding: 3rem 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden; /* To contain pseudo-elements */
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -5%;
+            width: 110%;
+            height: 100%;
+            background-color: var(--color-dark);
+            transform: skewY(-2deg); /* Saul Bass angle */
+            transform-origin: top left;
+            z-index: -1;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+         .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -5%;
+            width: 110%;
+            height: 100%;
+            background-color: var(--color-accent-blue);
+            transform: skewY(2deg); /* Opposite angle */
+            transform-origin: bottom right;
+            z-index: -2;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header h1 {
+            font-family: var(--font-primary);
+            font-size: clamp(2rem, 8vw, 4.5rem); /* Responsive font size */
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 1; /* Keep text above skew */
+            text-shadow: 4px 4px var(--color-dark);
+        }
+
+        .header p {
+            font-family: var(--font-secondary);
+            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+            color: var(--color-light);
+            max-width: 600px;
+            margin: 0.5rem auto 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Section Styling - Feed Like */
+        .feed-section {
+            background-color: var(--color-dark);
+            padding: 2.5rem 1rem;
+            margin-bottom: 3rem;
+            border-top: 5px solid var(--color-accent-yellow);
+            position: relative;
+            z-index: 5;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+        }
+
+        .feed-section:nth-child(even) {
+            background-color: var(--color-accent-gray);
+            border-color: var(--color-accent-blue);
+        }
+
+        .feed-section h2 {
+            font-family: var(--font-primary);
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            color: var(--color-accent-yellow);
+            text-align: center;
+            margin-bottom: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .feed-section h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            width: 80px;
+            height: 3px;
+            background-color: var(--color-light);
+        }
+
+        .feed-section:nth-child(even) h2 {
+            color: var(--color-accent-red);
+        }
+
+        .feed-section p {
+            font-family: var(--font-secondary);
+            font-size: clamp(1rem, 2.8vw, 1.15rem);
+            margin-bottom: 1.2rem;
+            line-height: 1.8;
+            color: var(--color-light);
+            text-align: justify;
+        }
+
+        .feed-section p strong {
+            color: var(--color-accent-yellow);
+        }
+
+        .feed-section:nth-child(even) p strong {
+            color: var(--color-accent-red);
+        }
+
+        /* Quote Styling - Prominent Blocks */
+        .quote-block {
+            background-color: var(--color-accent-red);
+            color: var(--color-light);
+            padding: 2rem 1.5rem;
+            margin: 2rem 0;
+            border-left: 8px solid var(--color-accent-yellow);
+            font-family: var(--font-primary);
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+            font-weight: 400;
+            line-height: 1.5;
+            text-align: center;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+        .quote-block.blue-accent {
+            background-color: var(--color-accent-blue);
+            border-left-color: var(--color-accent-red);
+        }
+        .quote-block.yellow-accent {
+            background-color: var(--color-accent-yellow);
+            color: var(--color-dark);
+            border-left-color: var(--color-accent-red);
+        }
+
+        .quote-block::before {
+            content: "“";
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            font-size: 6rem;
+            line-height: 1;
+            color: rgba(255, 255, 255, 0.1);
+            font-family: serif;
+        }
+
+        .quote-source {
+            display: block;
+            margin-top: 1.5rem;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-family: var(--font-secondary);
+            font-style: italic;
+            color: var(--color-light);
+        }
+        .quote-block.yellow-accent .quote-source {
+             color: var(--color-dark);
+        }
+
+        /* Sub-headings */
+        h3 {
+            font-family: var(--font-primary);
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            color: var(--color-accent-blue);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--color-light);
+            padding-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+        .feed-section:nth-child(even) h3 {
+            color: var(--color-accent-yellow);
+        }
+        
+        /* Links for sources within text */
+        a {
+            color: var(--color-accent-yellow);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        a:hover {
+            color: var(--color-accent-red);
+        }
+
+        /* Citation styling */
+        .citation {
+            font-size: 0.8em;
+            vertical-align: super;
+            color: var(--color-accent-yellow);
+            font-weight: bold;
+        }
+        .feed-section:nth-child(even) .citation {
+            color: var(--color-accent-red);
+        }
+
+        /* Source list at the end */
+        .sources-list {
+            background-color: var(--color-accent-gray);
+            padding: 2rem;
+            border-top: 5px solid var(--color-accent-red);
+            margin-top: 3rem;
+        }
+
+        .sources-list h2 {
+            color: var(--color-accent-yellow);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .sources-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sources-list li {
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--color-light);
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+            padding-bottom: 0.5rem;
+        }
+        .sources-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Mobile specific adjustments (already handled mostly by clamp() and max-width) */
+        @media (max-width: 600px) {
+            .header {
+                padding: 2rem 0.5rem;
+            }
+            .feed-section {
+                padding: 1.5rem 0.8rem;
+                margin-bottom: 2rem;
+            }
+            .quote-block {
+                padding: 1.5rem 1rem;
+            }
+            .quote-block::before {
+                font-size: 4rem;
+                top: 5px;
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Platform Vernaculars & Enshittification: Who Owns the Feed?</h1>
+        <p>Core: Platforms don’t just host culture—they feed on it. How do communities resist/adapt as platforms degrade?</p>
+    </div>
+
+    <div class="container">
+        <section id="introduction" class="feed-section">
+            <h2>Introduction: Platforms Feeding on Culture</h2>
+            <p>Platforms today don’t just host culture—they actively feed on it. Online communities develop their own “platform vernaculars” (unique styles, slang, memes, and practices native to each platform), but the platforms often exploit this user-generated culture for profit. As author Cory Doctorow observes, big tech platforms habitually lure users in with value, then gradually squeeze those users and creators for profit until the experience degrades into what he bluntly calls “enshittification.” The key question is: How do communities resist or adapt as platforms enshittify (degrade) over time? In this presentation, we’ll analyze a platform’s typical trajectory using Doctorow’s and André Brock’s insights, then factor in the rise of AI-driven “slop” content and evolving memetic trends. Ultimately, we examine who really owns and shapes the feed – the users and their communities, or the platform algorithms and owners.</p>
+        </section>
+
+        <section id="platform-vernaculars" class="feed-section">
+            <h2>Platform Vernaculars: Community Culture in the Feed</h2>
+            <p>Every social platform develops its own vernacular – a cultural conversation shaped by its users. Twitter, for example, saw the emergence of “Black Twitter” as a powerful subculture. André Brock describes Black Twitter as Twitter’s mediation of Black cultural discourse<span class="citation"></span>. Black Twitter users creatively repurposed Twitter’s features (like hashtags) to introduce Black vernacular and issues into trending topics. In fact, the hashtag – originally a simple tool to tag topics – became an expressive medium: Black Twitter’s “creative use of Twitter’s hashtag function and subsequent domination of Twitter’s trending topics” brought Black conversations to the mainstream feed<span class="citation"></span>. This was significant because it allowed a cultural group to surface its own discourse on a global platform, often “unconcerned with the mainstream gaze”<span class="citation"></span>. In other words, Black Twitter organically “owned” a chunk of the feed by pushing hashtags that outsiders couldn’t ignore. This kind of community-driven trendsetting is a form of bottom-up control over the feed’s content.</p>
+
+            <p>Other platforms show similar patterns: YouTube developed its own vlog style and clickbait thumbnail aesthetic as creators learned what the algorithm favored; Instagram led to the “photo dump” trend or specific influencer aesthetics; TikTok spawned dances and soundbite memes that set its tone. These platform vernaculars originate from users, but they flourish only so long as the platform’s environment supports them. Brock notes that Twitter’s design (brevity, trending lists, easy sharing) helped Black Twitter thrive<span class="citation"></span>. Likewise, TikTok’s algorithmic For You page initially gave ordinary creators an unprecedented reach, fueling viral meme formats and challenges. However, the platform owner’s goals can conflict with the community’s culture.</p>
+
+            <p>When a platform pivots to monetize aggressively, it may start to suppress or co-opt organic content. For example, Facebook in its early days was simply a way to see friends’ posts – a genuine social feed. But as Facebook grew, it began injecting more and more content that users never asked for (like recommended pages, viral videos, and eventually ads and shopping). Users who just wanted to “talk to each other” suddenly had to sift through noise designed to make them spend. As one essay wryly put it, platforms eventually expect you to “stop talking to each other and start buying things.”<span class="citation"></span> This encapsulates the turning point when a platform stops primarily serving user communities and starts feeding on them.</p>
+        </section>
+
+        <section id="enshittification-lifecycle" class="feed-section">
+            <h2>The Enshittification Lifecycle: How Platforms Die</h2>
+            <div class="quote-block">
+                <p>"Here is how platforms die: First, they are good to their users; then they abuse their users to make things better for their business customers; finally, they abuse those business customers to claw back all the value for themselves. Then, they die."</p>
+                <span class="quote-source">— Cory Doctorow, "The 'Enshittification' of TikTok" (WIRED, 2023)<span class="citation"></span></span>
+            </div>
+
+            <p>Cory Doctorow coins “enshittification” to describe this life-cycle of platform decline. In the beginning, a platform lavishes value on users to attract a critical mass. For instance, Amazon in its early years sold products below cost and had a superb search function, making it “a hell of a good deal” for shoppers<span class="citation"></span>. Or consider TikTok: it started as “really, a free Adobe Premiere for teenagers” with a magically good recommendation algorithm<span class="citation"></span>. Early TikTok made it easy for unknown teens to get millions of views, creating the sense that anyone could go viral. This stage hooks users and creators by delivering cultural value – fun, community, creativity, connection.</p>
+
+            <p>Next, once users are locked in, the platform shifts surplus value to business partners (advertisers, corporate content, sellers). Doctorow notes this happened as Amazon attracted third-party sellers and then began charging them ever-increasing fees and ad costs<span class="citation"></span>. On social media, this middle stage often means pushing professionally made or sponsored content over ordinary users’ posts. Doctorow gives the example of Facebook: after it got us dependent on seeing friends and family updates, it started cramming our feeds with posts from media outlets and brands, encouraging us to click off-site to articles<span class="citation"></span>. Platforms at this point tune the feed to favor engagement and profit over genuine social interactions.</p>
+
+            <div class="quote-block blue-accent">
+                <p>"Surpluses are first directed to users; then, once they’re locked in, surpluses go to suppliers; then once they’re locked in, the surplus is handed to shareholders and the platform becomes a useless pile of shit."</p>
+                <span class="quote-source">— Cory Doctorow, "The 'Enshittification' of TikTok" (WIRED, 2023)<span class="citation"></span></span>
+            </div>
+
+            <p>That final handoff to shareholders (or the platform itself) is the last stage of enshittification. In the final stage, the platform effectively feeds on its captive audience. It prioritizes its own revenue above all else, often to the detriment of both users and business partners. This is when user experience truly degrades: search results filled with ads and knock-offs, feeds flooded with sponsored posts, and algorithms that seemingly work against the users’ interests. As Doctorow puts it, “the platform becomes a useless pile of shit” in this stage<span class="citation"></span> – the original vibrant culture is buried under crap.</p>
+
+            <h3>TikTok's "Heating" Mechanism</h3>
+            <p>Cory Doctorow’s case study of TikTok shows enshittification in action. TikTok famously uses a For You feed that learns your likes. In the beginning, that algorithm was uncannily good at showing you content you enjoyed, which fueled TikTok’s explosive growth. But success gave TikTok the power to start quietly reshaping what you see. A Forbes investigation revealed TikTok has a secret “heating” button – employees can push certain videos to millions of people’s feeds at will<span class="citation"></span>. This was used to court influencers and brands by artificially giving them viral hits<span class="citation"></span>. In Doctorow’s words, “TikTok is handing out giant teddy bears” to lure in partners<span class="citation"></span>.</p>
+
+            <div class="quote-block yellow-accent">
+                <p>"TikTok is not in the business of giving away giant teddy bears. TikTok is only going to funnel free attention to the people it wants to entrap until they are entrapped, then it will withdraw that attention and begin to monetize it."</p>
+                <span class="quote-source">— Cory Doctorow, "The 'Enshittification' of TikTok" (WIRED, 2023)<span class="citation"></span></span>
+            </div>
+            
+            <p>Once influencers move in and casual users are hooked, TikTok can withdraw those boosts. In fact, Doctorow warns that TikTok will eventually punish creators by not even showing their videos to followers: “TikTok... will actively punish them by failing to deliver their videos to the users who subscribed to them. After all, every time TikTok shows you a video you asked to see, it loses a chance to show you a video it wants you to see.”<span class="citation"></span>. In short, TikTok’s feed is being tuned to serve TikTok’s interests (keeping you hooked on whatever yields the most ad revenue) rather than the users’ desires. As Doctorow bleakly concludes, “TikTok couldn’t resist the temptation to show you the things it wants you to see rather than what you want to see. The enshittification has begun.”<span class="citation"></span>. Once a platform crosses that line, trust is hard to regain – “It’s too late to save TikTok... the only thing left is to kill it with fire.”<span class="citation"></span> (Doctorow’s fiery metaphor for abandoning a platform once it’s rotten).</p>
+            
+            <p>Not every platform dies immediately from enshittification, but history shows many follow this trajectory. As Doctorow notes, this “shell-game with surpluses” was seen with early online services like Prodigy shifting from community forums to shopping, and with modern giants from Facebook to Twitter<span class="citation"></span>. Twitter (now rebranded as X) also went from a chronological, user-controlled feed to an algorithmic feed that inserts tweets from people you don’t follow, ads, and “who to follow” suggestions. Users often notice when their beloved platform feels less theirs and more like an exploitative mall. Instagram faced backlash for ditching its chronological feed and flooding users with recommended Reels and ads; many IG users complain the app stopped being about friends’ photos and became a TikTok clone chasing engagement. These are all symptoms of enshittification – the platform’s owners seizing the reins of the feed’s content.</p>
+        </section>
+
+        <section id="community-resistance" class="feed-section">
+            <h2>Communities Adapting and Resisting Platform Decline</h2>
+            <p>When platforms enshittify, communities don’t just surrender; they find ways to adapt or resist. One strategy is migrating or diversifying to new platforms. We saw a surge of Twitter users moving to alternatives like Mastodon or Bluesky in late 2022–2023 when Twitter (under new management) became, in many users’ eyes, a worse experience. This is risky (since a platform’s grip relies on network effects – “all your friends are here, you can’t leave”), but it does happen when discontent reaches a tipping point. Still, convincing an entire community to relocate is hard, and as Doctorow quips, “you may love your friends, but half the time you can’t agree on what movie to see or where to go for dinner. Forget it.”<span class="citation"></span> – network lock-in is real.</p>
+
+            <p>Another way communities resist is by carving out their own subspaces or tactics within the platform’s new rules. For example, when Facebook’s algorithm throttled external links, activists learned to post full content directly on Facebook to reach people. When Instagram de-prioritized single images, influencers started posting carousel photo dumps (because the algorithm actually boosts multi-image posts). Communities often develop new vernacular tricks to keep visibility: e.g. adding captions like “save this post!” to game Instagram’s save-based boosting, or using coded language to evade content moderation algorithms (like how TikTok users say “unalive” instead of “kill” to avoid removal). These are micro-resistances – ways to still get their message or culture out despite algorithmic suppression.</p>
+
+            <p>In more confrontational cases, users have organized to push back on platform decisions. One famous incident: when Reddit threatened unpopular changes, volunteer moderators coordinated blackouts of major subreddits in protest (essentially showing the platform that the community could disrupt the feed more than management could). On Twitter, users might weaponize humor and memes to ridicule new features (turning the narrative against the platform’s official line). These are all attempts to remind companies that the culture of the platform is user-driven – a form of asserting, “We (the users) own this space, not you.”</p>
+
+            <h3>Networked Protest and State Manipulation</h3>
+            <p>However, the most striking examples of adaptation come from activists and marginalized groups finding workarounds to platforms’ constraints. Zeynep Tufekci, in <em>Twitter and Tear Gas</em>, documents how protest movements leveraged social media to outmaneuver authorities – but also how those same tools introduced vulnerabilities. During the Arab Spring, Egyptian activists used Facebook and Twitter to coordinate massive protests in Tahrir Square. They even managed to circumvent government internet blackouts via satellite phones and proxy connections, “giving live interviews to the BBC... and tweeting over contraband Internet connections” while the regime tried to shut them down<span class="citation"></span>. The protesters “remained in charge of their message, which was heard around the world” despite the government’s attempts to control the narrative<span class="citation"></span>. This shows a community seizing control of the feed (in this case, the global information feed) to tell their own story.</p>
+
+            <div class="quote-block">
+                <p>"Movements can also use these very platforms to further their goals… to craft and amplify their own narrative… and to organize and resist. Movements are making their own history, but in circumstances and with tools not entirely of their own choosing."</p>
+                <span class="quote-source">— Zeynep Tufekci, "Twitter and Tear Gas" (WIRED, 2017)<span class="citation"></span></span>
+            </div>
+
+            <p>Tufekci notes that social media allowed these activists to “craft and amplify their own narrative, reach broader publics, and organize and resist”<span class="citation"></span> – essentially routing around traditional state-controlled media. Yet, Tufekci also warns of the fragility of these networked movements. Digital platforms’ advantages (speed, scale, decentralized reach) come with weaknesses: lack of formal leadership, susceptibility to surveillance or misinformation, and dependency on commercial tech infrastructure. Over time, governments learned to exploit these weaknesses. Instead of simply blocking information (the blunt 20th-century approach), regimes now engage in information flooding and manipulation – a tactic akin to enshittification but for political ends. Tufekci describes how some governments “muddy the online waters with misinformation, information overload, doubt, confusion, harassment, and distraction”, making it “hard for ordinary people to sort facts from fiction”<span class="citation"></span>. This is a form of censorship via noise: drowning the truth in a sea of junk so people lose trust or interest. “Rather than… blocking information,” authorities use the internet’s chaotic nature against itself, “making available information unusable.”<span class="citation"></span>. In a way, this mirrors what happens when platforms over-monetize – useful content is buried under sponsored trash – except here it’s deliberate state strategy to paralyze public discourse.</p>
+
+            <h3>The "Cuban Twitter" Plot</h3>
+            <p>A vivid example was the revelation of “Cuban Twitter.” In 2014, it came to light that the U.S. government (via USAID) built a secret Cuban social network called ZunZuneo, aiming to spark unrest in Cuba. The idea was to first attract Cuban youth with fun, apolitical content (like sports scores and music trivia) and gain a large user base, and “later introduce political content aimed at inspiring Cubans to organize ‘smart mobs’… to trigger a Cuban spring.”<span class="citation"></span>. At its peak, ZunZuneo had about 40,000 Cuban users, who had no idea it was run by the U.S. government harvesting their data<span class="citation"></span>. The plan explicitly stated there should be “absolutely no mention of United States government involvement”<span class="citation"></span> – a covert attempt to “own” the information feed of Cuban society. While ethically dubious (and legally questionable), this episode demonstrates how control of a platform equates to control of the narrative. In this case, an external actor tried to create a platform to influence a community’s behavior – effectively, to feed on Cuban culture and sentiments to provoke dissent. The Cuban Twitter plot eventually fizzled out and was exposed, but it highlights that ownership of the feed is a powerful prize pursued not just by corporations but governments.</p>
+        </section>
+
+        <section id="ai-slop" class="feed-section">
+            <h2>The Rise of AI “Slop” and Memetic Weirdness</h2>
+            <p>Just when we thought our feeds couldn’t get more cluttered, a new challenge has emerged: AI-generated content at scale, a.k.a. “AI slop.” In 2023–2025, generative AI tools (like image generators and text bots) became widely accessible, unleashing a flood of cheap, algorithmically-produced media. Comedian John Oliver dubbed this deluge “the newest iteration of spam” – “weird images and videos flooding people’s feeds” such that some people have “absolutely no idea that it isn’t real.”<span class="citation"></span>. AI slop includes everything from bizarre art pieces and meme videos to junk articles and product reviews written by bots. The internet is being inundated by machine-generated junk, and it’s getting harder to tell what’s organic human culture and what’s auto-generated filler.</p>
+
+            <div class="quote-block blue-accent">
+                <p>"The spread of AI generation tools has made it very easy to flood social media sites with cheap, professional-looking, often deeply weird content."</p>
+                <span class="quote-source">— John Oliver, "AI Slop" segment, Last Week Tonight (June 2025)<span class="citation"></span></span>
+            </div>
+
+            <p>Crucially, this content is designed to grab attention – it’s clicky, uncanny, or outrageous, and can be churned out in unlimited volume. Some of it is harmless fun, but some is malicious (deepfakes, misinformation), and almost all of it competes with genuine human content for eyeballs. Oliver put it bluntly: “it’s extremely likely that we are gonna be drowning in this shit for the foreseeable future.”<span class="citation"></span></p>
+
+            <h3>Italian Brain Rot: A New Vernacular of Absurdity</h3>
+            <p>One striking example of AI slop breeding a platform vernacular of its own is the “Italian Brain Rot” meme trend. In early 2025, TikTok and other networks were overrun by absurd AI-generated cartoon characters with faux-Italian names and gibberish songs. These include creations like Chimpanzini Bananini (a chimpanzee fused with a banana), Ballerina Cappuccina (a ballerina with a coffee cup head), and dozens more surreal hybrids<span class="citation"></span>. These memes feature “fast-paced, AI-generated and Italian-ish (though nonsensical) narration”<span class="citation"></span> and visuals that are deliberately chaotic. The point, as one journalist noted, is the “chaotic, nonsensical banality” is itself the appeal<span class="citation"></span> – it’s so dumb and random that it’s funny, especially to young people. The term “brain rot” even refers to the feeling of one’s brain decaying from consuming such mindless scrollable content<span class="citation"></span>.</p>
+            
+            <p>What’s fascinating is that Gen Z and Gen Alpha embraced these AI-slop memes almost because older folks found them baffling. Entire lore and in-jokes sprang up: fans created backstories (like certain Brainrot characters “at war” with others, theme songs, etc.)<span class="citation"></span>. A teacher observed that as soon as one student mentioned an Italian Brain Rot character, “the entire class starts talking about it… obsessively focused”<span class="citation"></span>. For that generation, this meme is a cultural touchstone precisely because it’s an illegible inside joke to adults<span class="citation"></span>. In effect, the TikTok algorithm helped forge a new vernacular that young users claim as their own subculture. It’s a feedback loop: the algorithm boosts content that gets high engagement; absurd AI videos get tons of quick likes (for the “WTF” factor), so more of them flood the feed. Kids then amplify the trend further through sheer enthusiasm. One Hard Fork podcast episode described it as “a strange new universe of A.I. slop that’s racking up millions of likes on TikTok.”<span class="citation"></span></p>
+
+            <p>But who owns this kind of feed content? It’s a mix of human creativity and algorithmic generation. For instance, Fabian Mosele, a 26-year-old animator, created many Italian Brain Rot videos using AI tools. His video of a Brainrot rave got 1 million views overnight and eventually 70 million views<span class="citation"></span>. He observes that the phenomenon “feels so ephemeral… but it also feels so real”<span class="citation"></span>. In other words, these memes are fleeting internet junk and genuine cultural artifacts for those who partake. They’ve even jumped beyond the screen: there are now Roblox games (“Steal a Brainrot” became one of the most popular games on the platform) and physical merchandise inspired by these characters<span class="citation"></span>. This illustrates how platform-fed AI memes can quickly commercialize and spread – ironically, users start feeding on the platform’s slop, turning it into play and profit.</p>
+
+            <h3>AI Slop: Erosion of Truth and Creativity</h3>
+            <p>John Oliver’s deeper concern is that AI slop doesn’t just waste our time – it erodes truth and creativity. If our feeds are, say, one-third filled with stuff from accounts we never followed (as is already the case on Facebook/Meta’s feed<span class="citation"></span>), and much of that is AI-generated clickbait, our ability to find authentic information or meaningful posts diminishes. Oliver notes that Meta not only is injecting algorithmic content, but “that’s how slop sneaks in without your permission.”<span class="citation"></span> The platform design itself is now a conduit for AI spam. Furthermore, AI slop often rips off real creators. Oliver highlighted how content farms use AI to copy artists’ work for pennies, causing, for example, a macramé artist’s online business to suffer a “precipitous drop in her income” when AI-generated knockoffs of her patterns appeared (as reported in his segment)<span class="citation"></span>. So, enshittification enters a new phase: not only are platforms favoring advertisers over users, now they might favor robots over human creators because the robots generate endless content for free. It’s telling that there are now “slop influencers” and get-rich-quick tutors teaching how to churn out AI content for monetization<span class="citation"></span>. The value loop then further bypasses communities: instead of paying a bunch of creative community members, a platform can fill space with AI outputs and pay only a handful of low-paid “slop farms” for volume. Oliver calls it a “volume game, like any form of spam”<span class="citation"></span>.</p>
+            
+            <p>The infiltration of AI content also poses an existential challenge to reality on the feed. When obviously fake-but-funny things like Ballerina Cappuccina go viral, it trains audiences (especially younger ones) to be comfortable with a mish-mash of real and fake. On the benign side, they know a dancing coffee cup is fake and that’s fine. But on the malicious side, realistic deepfake videos or “fake news” images can circulate and do actual harm. Oliver pointed out that the mere existence of convincingly faked media “empowers bad actors to dismiss real videos and images as fake”<span class="citation"></span>. We’ve already seen politicians cry “fake!” about genuine footage; as AI slop rises, that line gets blurrier. So in terms of “owning the feed,” AI content muddies who owns the narrative – it might allow anyone to construct a false narrative and spread it, and also allow any true narrative to be undermined by doubt. This is a new kind of enshittification of the entire information ecosystem: not just too many ads, but a crisis of authenticity.</p>
+        </section>
+
+        <section id="who-owns-the-feed" class="feed-section">
+            <h2>Who Owns the Feed?</h2>
+            <p>Bringing it all together, we return to the question: Who owns the feed? At first glance, the easy answer is “the platform owners do.” They write the algorithms, they set the rules, and as enshittification shows, they will ultimately reshape the feed to serve their profit motive or agenda. When Amazon turns its search results into a pay-to-play ad wall<span class="citation"></span>, clearly Amazon has taken ownership of that feed away from genuine user relevance. When TikTok decides to “heat” certain videos to manufacture virality<span class="citation"></span>, it is asserting control over what the community sees, regardless of organic interest. And when Meta/Facebook tweaks its algorithm so that over 30% of what you see comes from sources you never followed<span class="citation"></span>, it’s explicitly saying “we, not you, decide what appears on your feed.” In these respects, the feed is owned by the platform – we are just renting attention on it.</p>
+
+            <p>However, the story isn’t so one-sided. The content that makes a platform worth visiting is still largely produced by users and communities. As long as that’s true, those communities have leverage. Black Twitter’s cultural cachet gave it power: Twitter’s trending feed became compelling in large part due to Black Twitter’s contributions, effectively forcing Twitter (the company) to acknowledge and accommodate that community (at least until larger economic shifts changed the equation). When platforms push too far and alienate their creators or users, they can face backlash or exodus – look at the YouTube “Adpocalypse” or recent Twitch controversies where creators spoke out and platforms had to adjust policies. So one might say the feed is co-owned in a tense partnership: users supply the content and social energy, platforms supply the infrastructure and distribution.</p>
+
+            <p>Communities also “own” the feed insofar as meaning is concerned. They determine what’s cool, what goes viral (organically), and even platform owners cannot always manufacture that. The Italian Brain Rot craze, while facilitated by TikTok’s algorithm, caught fire because kids found it meaningful to them – a cultural inside joke. Had users not latched on, no algorithm could force that meme to become global. In activism, platforms might provide the medium, but the movements shape the message: during the 2020 BLM protests, for example, millions of users flooded social media feeds with posts, videos, and black square images in solidarity – effectively taking over the feed’s narrative for a time.</p>
+
+            <p>That said, the balance of power seems to be tilting ever more toward the platform side. Enshittification teaches us that once a company has captured its audience, it will leverage that position to extract value, even if it degrades user experience. Users often tolerate a surprising amount of degradation (as long as there’s no viable alternative where their friends or audience are). And now with AI slop, platforms have a new tool: they can fill our feeds without even needing human users to produce content! This is a bit dystopian – an internet where a large portion of content is bots talking to bots, with human eyeballs just passively consuming. In such a scenario, the community’s role in “owning” the feed’s culture could diminish. We already see hints: spammy AI-generated children’s videos on YouTube racking up views, bot accounts on Twitter generating engagement, or AI-generated articles populating Google search results so heavily that some speak of the “death of the real web”<span class="citation"></span>. If the “dead internet theory” (the idea that much of the internet is now bot content) becomes reality<span class="citation"></span>, then who owns the feed? Perhaps whoever runs the most servers and the best algorithms – in other words, the platform and those who can manipulate it (which might include state actors or clever hackers, not everyday users).</p>
+
+            <p>In conclusion, the feed – that endless scroll of posts or videos – is a battleground between community-driven vernacular culture and platform-driven algorithmic control. Platforms need user culture to thrive, but their profit logic drives them to appropriate and monetize that culture, often to the breaking point. Users and communities find new ways to adapt, subvert, or migrate, keeping the cycle going. As Doctorow’s lifecycle suggests, this cycle can end in the platform’s self-destruction (remember MySpace’s decline, or Tumblr’s fall after certain policy changes). The optimistic take is that whenever enshittification goes too far, users will seek or build new spaces – and new cultures will flourish there. The pessimistic take is that all big platforms eventually converge on the same extractive model, and with AI in the mix, the future feed could be an even more weird, monetized, manipulated stream that real communities struggle to reclaim.</p>
+
+            <p>Ultimately, “Who owns the feed?” is a question of power. Right now, power over social feeds is concentrated in a handful of big tech companies. But the content and vitality in those feeds come from the people. The more people realize this collective power, the more they can demand better (for example, pushing for algorithmic transparency, or choosing platforms that are community-run or open-source). If users can’t bend a platform back to serving them, they might flee to places where they have a bigger stake (as we see with the interest in decentralized networks). The feed is where our public life and culture increasingly unfolds – so it’s heartening to see people ask this very question. As we’ve explored, history and current trends show an ongoing tug-of-war. The hope is that by understanding enshittification and learning from how communities like Black Twitter or protest movements wielded these tools, we can find ways to resist the worst impulses of platforms. In the end, the feed should belong to those who create and engage in good faith, not those who seek to covertly exploit or manipulate. The fight for the feed is on, and we all have a stake in the outcome.</p>
+        </section>
+
+        <section id="sources" class="sources-list">
+            <h2>Sources</h2>
+            <ul>
+                <li>André Brock, “From the Blackhand Side: Twitter as a Cultural Conversation.” Journal of Broadcasting & Electronic Media 56(4): 529–549 (2012).<span class="citation"></span></li>
+                <li>Cory Doctorow, “The ‘Enshittification’ of TikTok.” Wired (Jan 2023).<span class="citation"></span></li>
+                <li>Zeynep Tufekci, <em>Twitter and Tear Gas: The Power and Fragility of Networked Protest</em>. Excerpt in Wired (May 2017).<span class="citation"></span></li>
+                <li>Associated Press via The Guardian, “US secretly created ‘Cuban Twitter’ to stir unrest and undermine government” (Apr 2014).<span class="citation"></span></li>
+                <li>John Oliver, “AI Slop” segment on Last Week Tonight (HBO, June 2025) – recap in The Guardian.<span class="citation"></span></li>
+                <li>Kevin Roose & Casey Newton, “Italian Brain Rot” discussion on Hard Fork (NYTimes podcast, May 2025).<span class="citation"></span></li>
+                <li>Elle Hunt, “How Gen Alpha went wild for Italian brain rot animals” – The Guardian (June 2025).<span class="citation"></span></li>
+                <li>Safiyah Riddle, “Meet Ballerina Cappuccina, the AI sensation with a cappuccino teacup head” – AP News (July 2025).<span class="citation"></span></li>
+                <li>“Work Less: AI at Work” - Podcast - Apple Podcasts.<span class="citation"></span></li>
+            </ul>
+        </section>
+    </div>
+
+    <script>
+        // Optional: Smooth scroll for internal links if navigation is added
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Optional: Add a class to sections when they are in view to trigger animations or visual changes
+        const observerOptions = {
+            root: null, // viewport
+            rootMargin: '0px',
+            threshold: 0.2 // 20% of section visible
+        };
+
+        const sectionObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-in-view');
+                } else {
+                    entry.target.classList.remove('is-in-view'); // Remove when out of view
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feed-section').forEach(section => {
+            sectionObserver.observe(section);
+        });
+    </script>
+</body>
+</html>
